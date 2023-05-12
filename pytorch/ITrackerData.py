@@ -54,7 +54,8 @@ class SubtractMean(object):
 
 class ITrackerData(data.Dataset):
     def __init__(self, dataPath, split = "train", imSize=(224,224), gridSize=(25, 25)):
-
+        
+        self.split = split
         self.dataPath = dataPath
         self.imSize = imSize
         self.gridSize = gridSize
@@ -73,18 +74,15 @@ class ITrackerData(data.Dataset):
         
         self.transformFace = transforms.Compose([
             transforms.Resize(self.imSize),
-            transforms.ToTensor(),
-            SubtractMean(meanImg=self.faceMean),
+            transforms.ToTensor()
         ])
         self.transformEyeL = transforms.Compose([
             transforms.Resize(self.imSize),
-            transforms.ToTensor(),
-            SubtractMean(meanImg=self.eyeLeftMean),
+            transforms.ToTensor()
         ])
         self.transformEyeR = transforms.Compose([
             transforms.Resize(self.imSize),
-            transforms.ToTensor(),
-            SubtractMean(meanImg=self.eyeRightMean),
+            transforms.ToTensor()
         ])
 
 
@@ -95,7 +93,7 @@ class ITrackerData(data.Dataset):
 
     def loadImage(self, image_array):
         try:
-            im = Image.open(imae_array).convert('RGB')
+            im = Image.open(image_array).convert('RGB')
         except OSError:
             raise RuntimeError('Could not read image: ')
             #im = Image.new("RGB", self.imSize, "white")
@@ -119,7 +117,7 @@ class ITrackerData(data.Dataset):
     def __getitem__(self, index):
         index = self.indices[index]
 
-        if(split == "train"):
+        if(self.split == "train"):
             imFace = self.loadImage(self.train_face)
             imEyeL = self.loadImage(self.train_eye_left)
             imEyeR = self.loadImage(self.train_eye_right)
