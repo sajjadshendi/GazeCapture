@@ -35,21 +35,6 @@ MEAN_PATH = './'
 
 
 
-class SubtractMean(object):
-    """Normalize an tensor image with mean.
-    """
-
-    def __init__(self, meanImg):
-        self.meanImg = transforms.ToTensor()(meanImg / 255)
-
-    def __call__(self, tensor):
-        """
-        Args:
-            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
-        Returns:
-            Tensor: Normalized image.
-        """       
-        return tensor.sub(self.meanImg)
 
 
 class ITrackerData(data.Dataset):
