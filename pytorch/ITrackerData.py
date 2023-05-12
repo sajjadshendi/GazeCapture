@@ -58,7 +58,7 @@ class ITrackerData(data.Dataset):
         self.dataPath = dataPath
         self.imSize = imSize
         self.gridSize = gridSize
-        self.npzfile = np.load(datapath)
+        self.npzfile = np.load(dataPath)
         self.train_eye_left = self.npzfile["train_eye_left"]
         self.train_eye_right = self.npzfile["train_eye_right"]
         self.train_face = self.npzfile["train_face"]
