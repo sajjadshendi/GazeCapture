@@ -34,7 +34,21 @@ Booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
 MEAN_PATH = './'
 
 
+class SubtractMean(object):
+    """Normalize an tensor image with mean.
+    """
 
+    def __init__(self, meanImg):
+        self.meanImg = transforms.ToTensor()(meanImg / 255)
+
+    def __call__(self, tensor):
+        """
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        """       
+        return tensor.sub(self.meanImg)
 
 
 class ITrackerData(data.Dataset):
@@ -56,19 +70,38 @@ class ITrackerData(data.Dataset):
         self.val_face_mask = self.npzfile["val_face_mask"]
         self.val_y = self.npzfile["val_y"]
 
-        
-        self.transformFace = transforms.Compose([
-            transforms.Resize(self.imSize),
-            transforms.ToTensor()
-        ])
-        self.transformEyeL = transforms.Compose([
-            transforms.Resize(self.imSize),
-            transforms.ToTensor()
-        ])
-        self.transformEyeR = transforms.Compose([
-            transforms.Resize(self.imSize),
-            transforms.ToTensor()
-        ])
+        if(split == "train"):
+            self.transformFace = transforms.Compose([
+                transforms.Resize(self.imSize),
+                transforms.ToTensor(),
+                SubtractMean(meanImg=self.train_face),
+            ])
+            self.transformEyeL = transforms.Compose([
+                transforms.Resize(self.imSize),
+                transforms.ToTensor(),
+                SubtractMean(meanImg=self.train_eye_left),
+            ])
+            self.transformEyeR = transforms.Compose([
+                transforms.Resize(self.imSize),
+                transforms.ToTensor(),
+                SubtractMean(meanImg=self.train_eye_right),
+            ])
+        else:
+            self.transformFace = transforms.Compose([
+                transforms.Resize(self.imSize),
+                transforms.ToTensor(),
+                SubtractMean(meanImg=self.val_face),
+            ])
+            self.transformEyeL = transforms.Compose([
+                transforms.Resize(self.imSize),
+                transforms.ToTensor(),
+                SubtractMean(meanImg=self.val_eye_left),
+            ])
+            self.transformEyeR = transforms.Compose([
+                transforms.Resize(self.imSize),
+                transforms.ToTensor(),
+                SubtractMean(meanImg=self.val_eye_right),
+            ])
 
 
         if(split == "train"):
