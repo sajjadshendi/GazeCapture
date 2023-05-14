@@ -104,18 +104,16 @@ class ITrackerData(data.Dataset):
         #return im
 
 
-    #def makeGrid(self, params):
-        #gridLen = self.gridSize[0] * self.gridSize[1]
-        #grid = np.zeros([gridLen,], np.float32)
+    def makeGrid(self, params):
+        gridLen = self.gridSize[0] * self.gridSize[1]
+        grid = np.zeros([gridLen,], np.float32)
         
-        #indsY = np.array([i // self.gridSize[0] for i in range(gridLen)])
-        #indsX = np.array([i % self.gridSize[0] for i in range(gridLen)])
-        #condX = np.logical_and(indsX >= params[0], indsX < params[0] + params[2]) 
-        #condY = np.logical_and(indsY >= params[1], indsY < params[1] + params[3]) 
-        #cond = np.logical_and(condX, condY)
-
-        #grid[cond] = 1
-        #return grid
+        place = 0
+        for i in range(self.gridSize[0]):
+            for j in range(self.gridSize[1]):
+                grid[place] = params[i][j]
+                place += 1
+        return grid
 
     def __getitem__(self, index):
         index = self.indices[index]
@@ -142,7 +140,7 @@ class ITrackerData(data.Dataset):
             imEyeR = self.transformEyeR(imEyeR)
             gaze = np.array(self.val_y[index], np.float32)
 
-            faceGrid = self.val_face_mask[index]
+            faceGrid = self.makeGrid(self.val_face_mask[index])
         
 
         # to tensor
