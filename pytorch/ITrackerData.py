@@ -122,11 +122,11 @@ class ITrackerData(data.Dataset):
         index = self.indices[index]
 
         if(self.split == "train"):
-            imFace = self.loadImage(self.train_face)
+            imFace = self.loadImage(self.train_face[index])
             imFace_new = normalize(imFace)
-            imEyeL = self.loadImage(self.train_eye_left)
+            imEyeL = self.loadImage(self.train_eye_left[index])
             imEyeL_new = normalize(imEyeL)
-            imEyeR = self.loadImage(self.train_eye_right)
+            imEyeR = self.loadImage(self.train_eye_right[index])
             imEyeR_new = normalize(imEyeR)
 
             imFace_new = self.transformFace(imFace_new)
@@ -137,11 +137,11 @@ class ITrackerData(data.Dataset):
             faceGrid = self.makeGrid(self.train_face_mask)
         
         else:
-            imFace = self.loadImage(self.val_face)
+            imFace = self.loadImage(self.val_face[index])
             imFace_new = normalize(imFace)
-            imEyeL = self.loadImage(self.val_eye_left)
+            imEyeL = self.loadImage(self.val_eye_left[index])
             imEyeL_new = normalize(imEyeL)
-            imEyeR = self.loadImage(self.val_eye_right)
+            imEyeR = self.loadImage(self.val_eye_right[index])
             imEyeR_new = normalize(imEyeR)
 
             imFace_new = self.transformFace(imFace_new)
