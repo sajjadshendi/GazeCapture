@@ -65,34 +65,28 @@ class ITrackerData(data.Dataset):
         if(split == "train"):
             self.transformFace = transforms.Compose([
                 transforms.Resize(self.imSize),
-                normalize(self.train_face),
-                transforms.ToTensor(),
+                transforms.ToTensor()
             ])
             self.transformEyeL = transforms.Compose([
                 transforms.Resize(self.imSize),
-                normalize(self.train_eye_left),
-                transforms.ToTensor(),
+                transforms.ToTensor()
             ])
             self.transformEyeR = transforms.Compose([
                 transforms.Resize(self.imSize),
-                normalize(self.train_eye_right),
-                transforms.ToTensor(),
+                transforms.ToTensor()
             ])
         else:
             self.transformFace = transforms.Compose([
                 transforms.Resize(self.imSize),
-                normalize(self.val_face),
-                transforms.ToTensor(),
+                transforms.ToTensor()
             ])
             self.transformEyeL = transforms.Compose([
                 transforms.Resize(self.imSize),
-                normalize(self.val_eye_left),
-                transforms.ToTensor(),
+                transforms.ToTensor()
             ])
             self.transformEyeR = transforms.Compose([
                 transforms.Resize(self.imSize),
-                normalize(self.val_eye_right),
-                transforms.ToTensor(),
+                transforms.ToTensor()
             ])
 
 
@@ -129,24 +123,30 @@ class ITrackerData(data.Dataset):
 
         if(self.split == "train"):
             imFace = self.loadImage(self.train_face)
+            imFace_new = normalize(imFace)
             imEyeL = self.loadImage(self.train_eye_left)
+            imEyeL_new = normalize(imEyeL)
             imEyeR = self.loadImage(self.train_eye_right)
+            imEyeR_new = normalize(imEyeR)
 
-            imFace = self.transformFace(imFace)
-            imEyeL = self.transformEyeL(imEyeL)
-            imEyeR = self.transformEyeR(imEyeR)
+            imFace_new = self.transformFace(imFace_new)
+            imEyeL_new = self.transformEyeL(imEyeL_new)
+            imEyeR_new = self.transformEyeR(imEyeR_new)
             gaze = np.array(self.train_y, np.float32)
 
             faceGrid = self.makeGrid(self.train_face_mask)
         
         else:
             imFace = self.loadImage(self.val_face)
+            imFace_new = normalize(imFace)
             imEyeL = self.loadImage(self.val_eye_left)
+            imEyeL_new = normalize(imEyeL)
             imEyeR = self.loadImage(self.val_eye_right)
+            imEyeR_new = normalize(imEyeR)
 
-            imFace = self.transformFace(imFace)
-            imEyeL = self.transformEyeL(imEyeL)
-            imEyeR = self.transformEyeR(imEyeR)
+            imFace_new = self.transformFace(imFace_new)
+            imEyeL_new = self.transformEyeL(imEyeL_new)
+            imEyeR_new = self.transformEyeR(imEyeR_new)
             gaze = np.array(self.val_y, np.float32)
 
             faceGrid = self.makeGrid(self.val_face_mask)
@@ -157,7 +157,7 @@ class ITrackerData(data.Dataset):
         faceGrid = torch.FloatTensor(faceGrid)
         gaze = torch.FloatTensor(gaze)
 
-        return row, imFace, imEyeL, imEyeR, faceGrid, gaze
+        return row, imFace_new, imEyeL_new, imEyeR_new, faceGrid, gaze
     
         
     def __len__(self):
