@@ -64,29 +64,29 @@ class ITrackerData(data.Dataset):
 
         if(split == "train"):
             self.transformFace = transforms.Compose([
-                transforms.Resize(self.imSize),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Resize(self.imSize)
             ])
             self.transformEyeL = transforms.Compose([
-                transforms.Resize(self.imSize),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Resize(self.imSize)
             ])
             self.transformEyeR = transforms.Compose([
-                transforms.Resize(self.imSize),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Resize(self.imSize)
             ])
         else:
             self.transformFace = transforms.Compose([
-                transforms.Resize(self.imSize),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Resize(self.imSize)
             ])
             self.transformEyeL = transforms.Compose([
-                transforms.Resize(self.imSize),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Resize(self.imSize)
             ])
             self.transformEyeR = transforms.Compose([
-                transforms.Resize(self.imSize),
-                transforms.ToTensor()
+                transforms.ToTensor(),
+                transforms.Resize(self.imSize)
             ])
 
 
