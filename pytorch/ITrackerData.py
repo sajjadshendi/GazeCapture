@@ -95,14 +95,14 @@ class ITrackerData(data.Dataset):
         else:
             self.indices = np.arange(len(self.val_y))
 
-    def loadImage(self, image_array):
-        try:
-            im = Image.open(image_array).convert('RGB')
-        except OSError:
-            raise RuntimeError('Could not read image: ')
+    #def loadImage(self, image_array):
+        #try:
+            #im = Image.open(image_array).convert('RGB')
+        #except OSError:
+            #raise RuntimeError('Could not read image: ')
             #im = Image.new("RGB", self.imSize, "white")
 
-        return im
+        #return im
 
 
     def makeGrid(self, params):
@@ -122,31 +122,25 @@ class ITrackerData(data.Dataset):
         index = self.indices[index]
 
         if(self.split == "train"):
-            imFace = self.loadImage(self.train_face[index])
-            imFace_new = normalize(imFace)
-            imEyeL = self.loadImage(self.train_eye_left[index])
-            imEyeL_new = normalize(imEyeL)
-            imEyeR = self.loadImage(self.train_eye_right[index])
-            imEyeR_new = normalize(imEyeR)
+            imFace = normalize(self.train_face[index])
+            imEyeL = normalize(self.train_eye_left[index])
+            imEyeR = normalize(self.train_eye_right[index])
 
-            imFace_new = self.transformFace(imFace_new)
-            imEyeL_new = self.transformEyeL(imEyeL_new)
-            imEyeR_new = self.transformEyeR(imEyeR_new)
+            imFace = self.transformFace(imFace)
+            imEyeL = self.transformEyeL(imEyeL)
+            imEyeR = self.transformEyeR(imEyeR)
             gaze = np.array(self.train_y[index], np.float32)
 
             faceGrid = self.makeGrid(self.train_face_mask[index])
         
         else:
-            imFace = self.loadImage(self.val_face[index])
-            imFace_new = normalize(imFace)
-            imEyeL = self.loadImage(self.val_eye_left[index])
-            imEyeL_new = normalize(imEyeL)
-            imEyeR = self.loadImage(self.val_eye_right[index])
-            imEyeR_new = normalize(imEyeR)
+            imFace = normalize(self.val_face[index])
+            imEyeL = normalize(self.val_eye_left[index])
+            imEyeR = normalize(self.val_eye_right[index])
 
-            imFace_new = self.transformFace(imFace_new)
-            imEyeL_new = self.transformEyeL(imEyeL_new)
-            imEyeR_new = self.transformEyeR(imEyeR_new)
+            imFace = self.transformFace(imFace)
+            imEyeL = self.transformEyeL(imEyeL)
+            imEyeR = self.transformEyeR(imEyeR)
             gaze = np.array(self.val_y[index], np.float32)
 
             faceGrid = self.makeGrid(self.val_face_mask[index])
