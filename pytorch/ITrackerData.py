@@ -132,9 +132,9 @@ class ITrackerData(data.Dataset):
             imFace_new = self.transformFace(imFace_new)
             imEyeL_new = self.transformEyeL(imEyeL_new)
             imEyeR_new = self.transformEyeR(imEyeR_new)
-            gaze = np.array(self.train_y, np.float32)
+            gaze = np.array(self.train_y[index], np.float32)
 
-            faceGrid = self.makeGrid(self.train_face_mask)
+            faceGrid = self.makeGrid(self.train_face_mask[index])
         
         else:
             imFace = self.loadImage(self.val_face[index])
@@ -147,9 +147,9 @@ class ITrackerData(data.Dataset):
             imFace_new = self.transformFace(imFace_new)
             imEyeL_new = self.transformEyeL(imEyeL_new)
             imEyeR_new = self.transformEyeR(imEyeR_new)
-            gaze = np.array(self.val_y, np.float32)
+            gaze = np.array(self.val_y[index], np.float32)
 
-            faceGrid = self.makeGrid(self.val_face_mask)
+            faceGrid = self.makeGrid(self.val_face_mask[index])
         
 
         # to tensor
