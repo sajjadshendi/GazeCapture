@@ -65,30 +65,29 @@ class ITrackerData(data.Dataset):
         if(split == "train"):
             self.transformFace = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Resize(self.imSize)
+                transforms.Resize(self.imSize, antialias=True)
             ])
             self.transformEyeL = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Resize(self.imSize)
+                transforms.Resize(self.imSize, antialias=True)
             ])
             self.transformEyeR = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Resize(self.imSize)
+                transforms.Resize(self.imSize, antialias=True)
             ])
         else:
             self.transformFace = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Resize(self.imSize)
+                transforms.Resize(self.imSize, antialias=True)
             ])
             self.transformEyeL = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Resize(self.imSize)
+                transforms.Resize(self.imSize, antialias=True)
             ])
             self.transformEyeR = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Resize(self.imSize)
+                transforms.Resize(self.imSize, antialias=True)
             ])
-
 
         if(split == "train"):
             self.indices = np.arange(len(self.train_y))
