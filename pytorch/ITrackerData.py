@@ -138,7 +138,7 @@ class ITrackerData(data.Dataset):
             imFace = self.transformFace(Image.fromarray(self.train_face[index]))
             imEyeL = self.transformEyeL(Image.fromarray(self.train_eye_left[index]))
             imEyeR = self.transformEyeR(Image.fromarray(self.train_eye_right[index]))
-            gaze = np.array(self.train_y[index], np.float32)
+            gaze = np.array([self.train_y[index][0], self.train_y[index][1]], np.float32)
 
             faceGrid = self.makeGrid(self.train_face_mask[index])
         
@@ -148,7 +148,7 @@ class ITrackerData(data.Dataset):
             imFace = self.transformFace(Image.fromarray(self.val_face[index]))
             imEyeL = self.transformEyeL(Image.fromarray(self.val_eye_left[index]))
             imEyeR = self.transformEyeR(Image.fromarray(self.val_eye_right[index]))
-            gaze = np.array(self.val_y[index], np.float32)
+            gaze = np.array([self.train_y[index][0], self.train_y[index][1]], np.float32)
 
             faceGrid = self.makeGrid(self.val_face_mask[index])
         
