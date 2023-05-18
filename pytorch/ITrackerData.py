@@ -36,12 +36,8 @@ MEAN_PATH = './'
 
 
 def normalize(data):
-    shape = data.shape
-    data = np.reshape(data, (shape[0], -1))
-    data = data.astype('float32') / 255. # scaling
-    data = data - np.mean(data, axis=0) # normalizing
-    return np.reshape(data, shape)
-
+    data_norm = (data-np.min(data))/(np.max(data)-np.min(data))
+    return data_norm
 
 
 class ITrackerData(data.Dataset):
