@@ -34,10 +34,34 @@ Booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
 
 MEAN_PATH = './'
 
+def loadMetadata(filename, silent = False):
+    try:
+        # http://stackoverflow.com/questions/6273634/access-array-contents-from-a-mat-file-loaded-using-scipy-io-loadmat-python
+        if not silent:
+            print('\tReading metadata from %s...' % filename)
+        metadata = sio.loadmat(filename, squeeze_me=True, struct_as_record=False)
+    except:
+        print('\tFailed to read the meta file "%s"!' % filename)
+        return None
+    return metadata
 
-def normalize(data):
-    data_norm = (data-np.min(data))/(np.max(data)-np.min(data))
-    return data_norm
+
+class SubtractMean(object):
+    """Normalize an tensor image with mean.
+    """
+
+    def __init__(self, meanImg):
+        self.meanImg = transforms.ToTensor()(meanImg / 255)
+
+    def __call__(self, tensor):
+        """
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        """       
+        return tensor.sub(self.meanImg)
+
 
 
 class ITrackerData(data.Dataset):
@@ -59,18 +83,24 @@ class ITrackerData(data.Dataset):
         self.val_face_mask = self.npzfile["val_face_mask"]
         self.val_y = self.npzfile["val_y"]
 
-        
+        self.faceMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_face_224.mat'))['image_mean']
+        self.eyeLeftMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_left_224.mat'))['image_mean']
+        self.eyeRightMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_right_224.mat'))['image_mean']
+
         self.transformFace = transforms.Compose([
              transforms.ToTensor(),
-             transforms.Resize(self.imSize, antialias=True)
+             transforms.Resize(self.imSize, antialias=True),
+             SubtractMean(meanImg=self.faceMean)
         ])
         self.transformEyeL = transforms.Compose([
              transforms.ToTensor(),
-             transforms.Resize(self.imSize, antialias=True)
+             transforms.Resize(self.imSize, antialias=True),
+             SubtractMean(meanImg=self.eyeLeftMean)
         ])
         self.transformEyeR = transforms.Compose([
              transforms.ToTensor(),
-             transforms.Resize(self.imSize, antialias=True)
+             transforms.Resize(self.imSize, antialias=True),
+             SubtractMean(meanImg=self.eyeRightMean)
         ])
         
 
@@ -104,25 +134,20 @@ class ITrackerData(data.Dataset):
         index = self.indices[index]
 
         if(self.split == "train"):
-            imFace = normalize(self.train_face[index])
-            imEyeL = normalize(self.train_eye_left[index])
-            imEyeR = normalize(self.train_eye_right[index])
-
-            imFace = self.transformFace(Image.fromarray(np.uint8(cm.gist_earth(imFace)*255)).convert('RGB'))
-            imEyeL = self.transformEyeL(Image.fromarray(np.uint8(cm.gist_earth(imEyeL)*255)).convert('RGB'))
-            imEyeR = self.transformEyeR(Image.fromarray(np.uint8(cm.gist_earth(imEyeR)*255)).convert('RGB'))
+            
+            imFace = self.transformFace(Image.fromarray(self.train_face[index]))
+            imEyeL = self.transformEyeL(Image.fromarray(self.train_eye_left[index]))
+            imEyeR = self.transformEyeR(Image.fromarray(self.train_eye_right[index]))
             gaze = np.array(self.train_y[index], np.float32)
 
             faceGrid = self.makeGrid(self.train_face_mask[index])
         
         else:
-            imFace = normalize(self.val_face[index])
-            imEyeL = normalize(self.val_eye_left[index])
-            imEyeR = normalize(self.val_eye_right[index])
 
-            imFace = self.transformFace(Image.fromarray(np.uint8(cm.gist_earth(imFace)*255)).convert('RGB'))
-            imEyeL = self.transformEyeL(Image.fromarray(np.uint8(cm.gist_earth(imEyeL)*255)).convert('RGB'))
-            imEyeR = self.transformEyeR(Image.fromarray(np.uint8(cm.gist_earth(imEyeR)*255)).convert('RGB'))
+
+            imFace = self.transformFace(Image.fromarray(self.val_face[index]))
+            imEyeL = self.transformEyeL(Image.fromarray(self.val_eye_left[index]))
+            imEyeR = self.transformEyeR(Image.fromarray(self.val_eye_right[index]))
             gaze = np.array(self.val_y[index], np.float32)
 
             faceGrid = self.makeGrid(self.val_face_mask[index])
