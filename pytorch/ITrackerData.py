@@ -1,6 +1,7 @@
 import torch.utils.data as data
 import scipy.io as sio
 from PIL import Image
+from matplotlib import cm
 import os
 import os.path
 import torchvision.transforms as transforms
@@ -111,9 +112,9 @@ class ITrackerData(data.Dataset):
             imEyeL = normalize(self.train_eye_left[index])
             imEyeR = normalize(self.train_eye_right[index])
 
-            imFace = self.transformFace(imFace)
-            imEyeL = self.transformEyeL(imEyeL)
-            imEyeR = self.transformEyeR(imEyeR)
+            imFace = self.transformFace(Image.fromarray(np.uint8(cm.gist_earth(imFace)*255)).convert('RGB'))
+            imEyeL = self.transformEyeL(Image.fromarray(np.uint8(cm.gist_earth(imEyeL)*255)).convert('RGB'))
+            imEyeR = self.transformEyeR(Image.fromarray(np.uint8(cm.gist_earth(imEyeR)*255)).convert('RGB'))
             gaze = np.array(self.train_y[index], np.float32)
 
             faceGrid = self.makeGrid(self.train_face_mask[index])
@@ -123,9 +124,9 @@ class ITrackerData(data.Dataset):
             imEyeL = normalize(self.val_eye_left[index])
             imEyeR = normalize(self.val_eye_right[index])
 
-            imFace = self.transformFace(imFace)
-            imEyeL = self.transformEyeL(imEyeL)
-            imEyeR = self.transformEyeR(imEyeR)
+            imFace = self.transformFace(Image.fromarray(np.uint8(cm.gist_earth(imFace)*255)).convert('RGB'))
+            imEyeL = self.transformEyeL(Image.fromarray(np.uint8(cm.gist_earth(imEyeL)*255)).convert('RGB'))
+            imEyeR = self.transformEyeR(Image.fromarray(np.uint8(cm.gist_earth(imEyeR)*255)).convert('RGB'))
             gaze = np.array(self.val_y[index], np.float32)
 
             faceGrid = self.makeGrid(self.val_face_mask[index])
