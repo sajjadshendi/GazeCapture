@@ -62,32 +62,20 @@ class ITrackerData(data.Dataset):
         self.val_face_mask = self.npzfile["val_face_mask"]
         self.val_y = self.npzfile["val_y"]
 
-        if(split == "train"):
-            self.transformFace = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize(self.imSize, antialias=True)
-            ])
-            self.transformEyeL = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize(self.imSize, antialias=True)
-            ])
-            self.transformEyeR = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize(self.imSize, antialias=True)
-            ])
-        else:
-            self.transformFace = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize(self.imSize, antialias=True)
-            ])
-            self.transformEyeL = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize(self.imSize, antialias=True)
-            ])
-            self.transformEyeR = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize(self.imSize, antialias=True)
-            ])
+        
+        self.transformFace = transforms.Compose([
+             transforms.ToTensor(),
+             transforms.Resize(self.imSize, antialias=True)
+        ])
+        self.transformEyeL = transforms.Compose([
+             transforms.ToTensor(),
+             transforms.Resize(self.imSize, antialias=True)
+        ])
+        self.transformEyeR = transforms.Compose([
+             transforms.ToTensor(),
+             transforms.Resize(self.imSize, antialias=True)
+        ])
+        
 
         if(split == "train"):
             self.indices = np.arange(len(self.train_y))
