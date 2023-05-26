@@ -129,7 +129,7 @@ def main():
         return
     
     if doPredict:
-        dataPredict.FrameCapture()
+        dataPredict.prepare()
         return
 
     for epoch in range(0, epoch):
