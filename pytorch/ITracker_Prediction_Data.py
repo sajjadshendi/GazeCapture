@@ -2,7 +2,7 @@ import cv2
 class ITracker_Prediction_Data():
   
     def __init__(self, dataPath, imSize = (224, 224)):
-      self.dataPath = dataPath
+      self.datapath = dataPath
       self.imSize = imSize
     
     def FrameCapture(self):
@@ -23,7 +23,8 @@ class ITracker_Prediction_Data():
           success, image = vidObj.read()
   
           # Saves the frames with frame-count
-          cv2.imwrite("frame%d.jpg" % count, image)
+          if(success):
+            cv2.imwrite("frame%d.jpg" % count, image)
   
           count += 1
     
