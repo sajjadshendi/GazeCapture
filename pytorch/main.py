@@ -99,27 +99,29 @@ def main():
         else:
             print('Warning: Could not read checkpoint!')
 
-    
-    dataTrain = ITrackerData(dataPath = args.data_path, split='train', imSize = imSize)
-    dataVal = ITrackerData(dataPath = args.data_path, split='test', imSize = imSize)
-    dataPredict = ITracker_Prediction_Data(dataPath = args.data_path, imSize = imSize)
-   
-    train_loader = torch.utils.data.DataLoader(
+    if(not doPredict):
+      dataTrain = ITrackerData(dataPath = args.data_path, split='train', imSize = imSize)
+      dataVal = ITrackerData(dataPath = args.data_path, split='test', imSize = imSize)
+
+      train_loader = torch.utils.data.DataLoader(
         dataTrain,
         batch_size=batch_size, shuffle=True,
         num_workers=workers, pin_memory=True)
 
-    val_loader = torch.utils.data.DataLoader(
+      val_loader = torch.utils.data.DataLoader(
         dataVal,
         batch_size=batch_size, shuffle=False,
         num_workers=workers, pin_memory=True)
 
+      criterion = nn.MSELoss().cuda()
 
-    criterion = nn.MSELoss().cuda()
-
-    optimizer = torch.optim.SGD(model.parameters(), lr,
+      optimizer = torch.optim.SGD(model.parameters(), lr,
                                 momentum=momentum,
                                 weight_decay=weight_decay)
+    else:
+      dataPredict = ITracker_Prediction_Data(dataPath = args.data_path, imSize = imSize)
+
+
 
     # Quick test
     if doTest:
