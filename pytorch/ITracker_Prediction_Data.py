@@ -4,6 +4,7 @@ class ITracker_Prediction_Data():
     def __init__(self, dataPath, imSize = (224, 224)):
       self.datapath = dataPath
       self.imSize = imSize
+      self.images = []
     
     def FrameCapture(self):
   
@@ -15,8 +16,8 @@ class ITracker_Prediction_Data():
   
       # checks whether frames were extracted
       success = 1
-      
-      images = []
+     
+    
       while success:
   
           # vidObj object calls read
@@ -25,8 +26,15 @@ class ITracker_Prediction_Data():
   
           # Saves the frames with frame-count
           if(success):
-            images.append(image)
+            self.images.append(image)
   
           count += 1
-      return images
+      return
     
+    def Frame_Process(frame):
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+        face_coordinates = face_cascade.detectMultiScale(gray, 1.1, 10)
+        for (x, y, w, h) in face_coordinates:
+            face = frame[y:y + h, x:x + w]
+        return face
