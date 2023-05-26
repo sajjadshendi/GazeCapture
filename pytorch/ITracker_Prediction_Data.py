@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 class ITracker_Prediction_Data():
   
     def __init__(self, dataPath, imSize = (224, 224), gridSize=(25, 25)):
@@ -63,18 +64,18 @@ class ITracker_Prediction_Data():
         
         gridLen = self.gridSize[0] * self.gridSize[1]
         grid = np.zeros([gridLen,], np.float32)
-        width = fame.shape[0]
-        height = frame.shape[1]
+        height = frame.shape[0]
+        width = frame.shape[1]
         for (x, y, w, h) in face_coordinates:
             x = self.gridSize[0] * ((x+1) / width)
             y = self.gridSize[0] * ((y+1) / height)
-            w = w * (gridLen / width)
-            h = h * (gridLen / height)
-        for i in range(x-1, x+w):
-            for j in range(y-1, y+h):
-                grid[((j-1) * self.gridSize[0]) + (i - 1)] = 1
-        print(grid)
-    
+            w = w * (self.gridSize[0] / width)
+            h = h * (self.gridSize[0] / height)
+        for i in range(int(x-1), int(x+w)):
+            for j in range(int(y-1), int(y+h)):
+                grid[((j-1) * self.gridSize[0]) + (i)] = 1
+        
+        return face, left_eye, right_eye, grid
     def prepare(self):
         self.FrameCapture()
-        self.Frame_Process(self.images[0])
+        self.Frame_Process(self.images[10])
