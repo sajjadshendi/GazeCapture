@@ -15,7 +15,8 @@ class ITracker_Prediction_Data():
   
       # checks whether frames were extracted
       success = 1
-  
+      
+      images = []
       while success:
   
           # vidObj object calls read
@@ -24,7 +25,8 @@ class ITracker_Prediction_Data():
   
           # Saves the frames with frame-count
           if(success):
-            cv2.imwrite("frame%d.jpg" % count, image)
+            images.append(image)
   
           count += 1
+      return images
     
