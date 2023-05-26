@@ -37,9 +37,14 @@ class ITracker_Prediction_Data():
         face_coordinates = face_cascade.detectMultiScale(gray, 1.1, 10)
         face = frame[0:1, 0:1]
         for (x, y, w, h) in face_coordinates:
+            face_gray = gray[y:y + h, x:x + w]
             face = frame[y:y + h, x:x + w]
-        return face
+        eye_cascade = cv2.CascadeClassifier('haarcascades\haarcascade_eye_tree_eyeglasses.xml')
+        eye_coordinates = eye_cascade.detectMultiScale(face_gray)
+        print(eye_coordinates)
+        #for (ex,ey,ew,eh) in eyecoordinates:
+         
     
     def prepare(self):
         self.FrameCapture()
-        print(self.Frame_Process(self.images[0]))
+        self.Frame_Process(self.images[0])
