@@ -38,3 +38,6 @@ class ITracker_Prediction_Data():
         for (x, y, w, h) in face_coordinates:
             face = frame[y:y + h, x:x + w]
         return face
+    
+    def prepare():
+        return(Frame_Process(self.images[0]))
