@@ -127,8 +127,7 @@ def main():
         return
     
     if doPredict:
-        #predict(dataPredict, model)
-        print("Hello")
+        dataPredict.FrameCapture()
         return
 
     for epoch in range(0, epoch):
