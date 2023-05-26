@@ -49,11 +49,13 @@ parser = argparse.ArgumentParser(description='iTracker-pytorch-Trainer.')
 parser.add_argument('--data_path', help="Path to processed dataset. It should contain metadata.mat. Use prepareDataset.py.")
 parser.add_argument('--sink', type=str2bool, nargs='?', const=True, default=False, help="Just sink and terminate.")
 parser.add_argument('--reset', type=str2bool, nargs='?', const=True, default=False, help="Start from scratch (do not load).")
+parser.add_argument('--predict', type=str2bool, nargs='?', const=True, default=False, help="use model for predicting")
 args = parser.parse_args()
 
 # Change there flags to control what happens.
 doLoad = not args.reset # Load checkpoint at the beginning
 doTest = args.sink # Only run test, no training
+doPredict = args.predict # predict gaze estimation
 
 workers = 2
 epochs = 25
@@ -99,6 +101,7 @@ def main():
     
     dataTrain = ITrackerData(dataPath = args.data_path, split='train', imSize = imSize)
     dataVal = ITrackerData(dataPath = args.data_path, split='test', imSize = imSize)
+    #dataPredict = 
    
     train_loader = torch.utils.data.DataLoader(
         dataTrain,
@@ -120,6 +123,11 @@ def main():
     # Quick test
     if doTest:
         validate(val_loader, model, criterion, epoch)
+        return
+    
+    if doPredict:
+        #predict(dataPredict, model)
+        print("Hello")
         return
 
     for epoch in range(0, epoch):
