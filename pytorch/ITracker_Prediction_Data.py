@@ -54,9 +54,9 @@ class ITracker_Prediction_Data():
         right_eye = face[0:1, 0:1]
         for (ex,ey,ew,eh) in eye_coordinates:
             if(count == 0):
-                left_eye = face[ex:ex + ew, ey:ey + eh]
+                left_eye = face[ey:ey + eh, ex:ex + ew]
             else:
-                right_eye = face[ex:ex + ew, ey:ey + eh]
+                right_eye = face[ey:ey + eh, ex:ex + ew]
             count += 1
         print(face, left_eye, right_eye)
     
