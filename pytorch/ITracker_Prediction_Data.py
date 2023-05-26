@@ -1,9 +1,10 @@
 import cv2
 class ITracker_Prediction_Data():
   
-    def __init__(self, dataPath, imSize = (224, 224)):
+    def __init__(self, dataPath, imSize = (224, 224), gridSize=(25, 25)):
       self.datapath = dataPath
       self.imSize = imSize
+      self.gridSize = gridSize
       self.images = []
     
     def FrameCapture(self):
@@ -58,7 +59,21 @@ class ITracker_Prediction_Data():
             else:
                 right_eye = face[ey:ey + eh, ex:ex + ew]
             count += 1
-        print(face, left_eye, right_eye)
+            
+        
+        gridLen = self.gridSize[0] * self.gridSize[1]
+        grid = np.zeros([gridLen,], np.float32)
+        width = fame.shape[0]
+        height = frame.shape[1]
+        for (x, y, w, h) in face_coordinates:
+            x = self.gridSize[0] * ((x+1) / width)
+            y = self.gridSize[0] * ((y+1) / height)
+            w = w * (gridLen / width)
+            h = h * (gridLen / height)
+        for i in range(x-1, x+w):
+            for j in range(y-1, y+h):
+                grid[((j-1) * self.gridSize[0]) + (i - 1)] = 1
+        print(grid)
     
     def prepare(self):
         self.FrameCapture()
