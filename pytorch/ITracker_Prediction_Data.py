@@ -34,16 +34,31 @@ class ITracker_Prediction_Data():
     def Frame_Process(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+        eye_cascade = cv2.CascadeClassifier('haarcascade_eye_tree_eyeglasses.xml')
         face_coordinates = face_cascade.detectMultiScale(gray, 1.1, 10)
         face = frame[0:1, 0:1]
+        face_gray = gray[0:1, 0:1]
         for (x, y, w, h) in face_coordinates:
             face_gray = gray[y:y + h, x:x + w]
             face = frame[y:y + h, x:x + w]
-        eye_cascade = cv2.CascadeClassifier('haarcascades\haarcascade_eye_tree_eyeglasses.xml')
-        eye_coordinates = eye_cascade.detectMultiScale(face_gray)
-        print(eye_coordinates)
-        #for (ex,ey,ew,eh) in eyecoordinates:
-         
+        eye_coordinates_unsorted = eye_cascade.detectMultiScale(face_gray)
+        eye_coordinates = []
+        if(eye_coordinates_unsorted[0][0] > eye_coordinates_unsorted[1][1]):
+            eye_coordinates.append(eye_coordinates_unsorted[1])
+            eye_coordinates.append(eye_coordinates_unsorted[0])
+        else:
+            eye_coordinates.append(eye_coordinates_unsorted[0])
+            eye_coordinates.append(eye_coordinates_unsorted[1])
+        count = 0
+        left_eye = face[0:1, 0:1]
+        right_eye = face[0:1, 0:1]
+        for (ex,ey,ew,eh) in eye_coordinates:
+            if(count == 0):
+                left_eye = face[ex:ex + ew, ey:ey + eh]
+            else:
+                right_eye = face[ex:ex + ew, ey:ey + eh]
+            count += 1
+        print(face, left_eye, right_eye)
     
     def prepare(self):
         self.FrameCapture()
