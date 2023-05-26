@@ -101,7 +101,7 @@ def main():
     
     dataTrain = ITrackerData(dataPath = args.data_path, split='train', imSize = imSize)
     dataVal = ITrackerData(dataPath = args.data_path, split='test', imSize = imSize)
-    #dataPredict = 
+    dataPredict = ITracker_Prediction_Data(dataPath = args.data_path, imSize = imSize)
    
     train_loader = torch.utils.data.DataLoader(
         dataTrain,
