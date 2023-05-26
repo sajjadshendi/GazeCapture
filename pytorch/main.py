@@ -14,6 +14,7 @@ import torchvision.models as models
 
 from ITrackerData import ITrackerData
 from ITrackerModel import ITrackerModel
+from ITracker_Prediction_Data import ITracker_Prediction_Data
 
 '''
 Train/test code for iTracker.
