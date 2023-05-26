@@ -31,7 +31,7 @@ class ITracker_Prediction_Data():
           count += 1
       return
     
-    def Frame_Process(frame):
+    def Frame_Process(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
         face_coordinates = face_cascade.detectMultiScale(gray, 1.1, 10)
@@ -39,5 +39,5 @@ class ITracker_Prediction_Data():
             face = frame[y:y + h, x:x + w]
         return face
     
-    def prepare():
-        return(Frame_Process(self.images[0]))
+    def prepare(self):
+        return(self.Frame_Process(self.images[0]))
