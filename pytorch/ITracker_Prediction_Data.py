@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
 from PIL import Image
-
+import scipy.io as sio
+import torchvision.transforms as transforms
+import torch
+import os
 
 MEAN_PATH = './'
 
@@ -47,20 +50,20 @@ class ITracker_Prediction_Data():
       self.eyeRightMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_right_224.mat'))['image_mean']
       
       self.transformFace = transforms.Compose([
-            transforms.Resize(self.imSize),
             transforms.ToTensor(),
-            SubtractMean(meanImg=self.faceMean),
-        ])
-        self.transformEyeL = transforms.Compose([
-            transforms.Resize(self.imSize),
+            transforms.Resize(self.imSize, antialias=True),
+            SubtractMean(meanImg=self.eyeRightMean)
+      ])
+      self.transformEyeL = transforms.Compose([
             transforms.ToTensor(),
-            SubtractMean(meanImg=self.eyeLeftMean),
-        ])
-        self.transformEyeR = transforms.Compose([
-            transforms.Resize(self.imSize),
+            transforms.Resize(self.imSize, antialias=True),
+            SubtractMean(meanImg=self.eyeRightMean)
+      ])
+      self.transformEyeR = transforms.Compose([
             transforms.ToTensor(),
-            SubtractMean(meanImg=self.eyeRightMean),
-        ])
+            transforms.Resize(self.imSize, antialias=True),
+            SubtractMean(meanImg=self.eyeRightMean)
+      ])
 
     
     def loadImage(self, array):
@@ -150,7 +153,7 @@ class ITracker_Prediction_Data():
         data = []
         for image in self.images:
             per_image = []
-            face, left_eye, right_eye, grid = slef.Frame_Process(image)
+            face, left_eye, right_eye, grid = self.Frame_Process(image)
             imFace = self.loadImage(face)
             imEyeL = self.loadImage(left_eye)
             imEyeR = self.loadImage(right_eye)
@@ -181,6 +184,7 @@ class ITracker_Prediction_Data():
           imEyeR = torch.autograd.Variable(imEyeR, requires_grad = True)
           faceGrid = torch.autograd.Variable(faceGrid, requires_grad = True)
           output = model(imFace, imEyeL, imEyeR, faceGrid)
+          print(output)
           estimations.append(output)
         return estimations
     
