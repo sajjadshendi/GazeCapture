@@ -169,7 +169,7 @@ class ITracker_Prediction_Data():
             per_image.append(imEyeL)
             per_image.append(imEyeR)
             per_image.append(grid)
-            data.apppend(per_image)
+            data.append(per_image)
         return data
      
     def process(self, model):
