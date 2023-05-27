@@ -129,7 +129,7 @@ def main():
         return
     
     if doPredict:
-        dataPredict.process(model)
+        print(dataPredict.process(model))
         return
 
     for epoch in range(0, epoch):
