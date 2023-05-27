@@ -112,39 +112,41 @@ class ITracker_Prediction_Data():
             face_gray = gray[y:y + h, x:x + w]
             face = frame[y:y + h, x:x + w]
         eye_coordinates_unsorted = eye_cascade.detectMultiScale(face_gray)
-        eye_coordinates = []
-        if(eye_coordinates_unsorted[0][0] > eye_coordinates_unsorted[1][1]):
-            eye_coordinates.append(eye_coordinates_unsorted[1])
-            eye_coordinates.append(eye_coordinates_unsorted[0])
-        else:
-            eye_coordinates.append(eye_coordinates_unsorted[0])
-            eye_coordinates.append(eye_coordinates_unsorted[1])
-        count = 0
-        left_eye = face[0:1, 0:1]
-        right_eye = face[0:1, 0:1]
-        for (ex,ey,ew,eh) in eye_coordinates:
-            if(count == 0):
-                left_eye = face[ey:ey + eh, ex:ex + ew]
+        if(eye_coordinates_unsorted.shape == (2,4)):
+            eye_coordinates = []
+            if(eye_coordinates_unsorted[0][0] > eye_coordinates_unsorted[1][0]):
+                eye_coordinates.append(eye_coordinates_unsorted[1])
+                eye_coordinates.append(eye_coordinates_unsorted[0])
             else:
-                right_eye = face[ey:ey + eh, ex:ex + ew]
-            count += 1
+                eye_coordinates.append(eye_coordinates_unsorted[0])
+                eye_coordinates.append(eye_coordinates_unsorted[1])
+            count = 0
+            left_eye = face[0:1, 0:1]
+            right_eye = face[0:1, 0:1]
+            for (ex,ey,ew,eh) in eye_coordinates:
+                if(count == 0):
+                    left_eye = face[ey:ey + eh, ex:ex + ew]
+                else:
+                    right_eye = face[ey:ey + eh, ex:ex + ew]
+                count += 1
+                
             
-        
-        gridLen = self.gridSize[0] * self.gridSize[1]
-        grid = np.zeros([gridLen,], np.float32)
-        height = frame.shape[0]
-        width = frame.shape[1]
-        for (x, y, w, h) in face_coordinates:
-            x = self.gridSize[0] * ((x+1) / width)
-            y = self.gridSize[0] * ((y+1) / height)
-            w = w * (self.gridSize[0] / width)
-            h = h * (self.gridSize[0] / height)
-        for i in range(int(x-1), int(x+w)):
-            for j in range(int(y-1), int(y+h)):
-                grid[((j-1) * self.gridSize[0]) + (i)] = 1
-        
-        return face, left_eye, right_eye, grid
-    
+            gridLen = self.gridSize[0] * self.gridSize[1]
+            grid = np.zeros([gridLen,], np.float32)
+            height = frame.shape[0]
+            width = frame.shape[1]
+            for (x, y, w, h) in face_coordinates:
+                x = self.gridSize[0] * ((x+1) / width)
+                y = self.gridSize[0] * ((y+1) / height)
+                w = w * (self.gridSize[0] / width)
+                h = h * (self.gridSize[0] / height)
+            for i in range(int(x-1), int(x+w)):
+                for j in range(int(y-1), int(y+h)):
+                    grid[((j-1) * self.gridSize[0]) + (i)] = 1
+            
+            return face, left_eye, right_eye, grid, True
+        else:
+          return False, False, False, False, False
     
   
     
@@ -153,7 +155,9 @@ class ITracker_Prediction_Data():
         data = []
         for image in self.images:
             per_image = []
-            face, left_eye, right_eye, grid = self.Frame_Process(image)
+            face, left_eye, right_eye, grid, flag = self.Frame_Process(image)
+            if(not flag):
+                continue
             imFace = self.loadImage(face)
             imEyeL = self.loadImage(left_eye)
             imEyeR = self.loadImage(right_eye)
