@@ -1,5 +1,40 @@
 import cv2
 import numpy as np
+from PIL import Image
+
+
+MEAN_PATH = './'
+
+
+def loadMetadata(filename, silent = False):
+    try:
+        # http://stackoverflow.com/questions/6273634/access-array-contents-from-a-mat-file-loaded-using-scipy-io-loadmat-python
+        if not silent:
+            print('\tReading metadata from %s...' % filename)
+        metadata = sio.loadmat(filename, squeeze_me=True, struct_as_record=False)
+    except:
+        print('\tFailed to read the meta file "%s"!' % filename)
+        return None
+    return metadata
+
+
+class SubtractMean(object):
+    """Normalize an tensor image with mean.
+    """
+
+    def __init__(self, meanImg):
+        self.meanImg = transforms.ToTensor()(meanImg / 255)
+
+    def __call__(self, tensor):
+        """
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        """       
+        return tensor.sub(self.meanImg)
+
+
 class ITracker_Prediction_Data():
   
     def __init__(self, dataPath, imSize = (224, 224), gridSize=(25, 25)):
@@ -7,6 +42,36 @@ class ITracker_Prediction_Data():
       self.imSize = imSize
       self.gridSize = gridSize
       self.images = []
+      self.faceMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_face_224.mat'))['image_mean']
+      self.eyeLeftMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_left_224.mat'))['image_mean']
+      self.eyeRightMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_right_224.mat'))['image_mean']
+      
+      self.transformFace = transforms.Compose([
+            transforms.Resize(self.imSize),
+            transforms.ToTensor(),
+            SubtractMean(meanImg=self.faceMean),
+        ])
+        self.transformEyeL = transforms.Compose([
+            transforms.Resize(self.imSize),
+            transforms.ToTensor(),
+            SubtractMean(meanImg=self.eyeLeftMean),
+        ])
+        self.transformEyeR = transforms.Compose([
+            transforms.Resize(self.imSize),
+            transforms.ToTensor(),
+            SubtractMean(meanImg=self.eyeRightMean),
+        ])
+
+    
+    def loadImage(self, array):
+        try:
+            im = Image.fromarray(array).convert('RGB')
+        except OSError:
+            raise RuntimeError('Could not read image: ' + array)
+            #im = Image.new("RGB", self.imSize, "white")
+
+        return im
+    
     
     def FrameCapture(self):
   
@@ -76,6 +141,47 @@ class ITracker_Prediction_Data():
                 grid[((j-1) * self.gridSize[0]) + (i)] = 1
         
         return face, left_eye, right_eye, grid
+    
+    
+  
+    
     def prepare(self):
         self.FrameCapture()
-        self.Frame_Process(self.images[10])
+        data = []
+        for image in self.images:
+            per_image = []
+            face, left_eye, right_eye, grid = slef.Frame_Process(image)
+            imFace = self.loadImage(face)
+            imEyeL = self.loadImage(left_eye)
+            imEyeR = self.loadImage(right_eye)
+
+            imFace = self.transformFace(imFace)
+            imEyeL = self.transformEyeL(imEyeL)
+            imEyeR = self.transformEyeR(imEyeR)
+            per_image.append(imFace)
+            per_image.append(imEyeL)
+            per_image.append(imEyeR)
+            per_image.append(grid)
+        return data
+     
+    def process(self, model):
+        data = self.prepare()
+        estimations = []
+        for image in data:
+          imFace = data[0]
+          imEyeL = data[1]
+          imEyeR = data[2]
+          faceGrid = data[3]
+          imFace = imFace.cuda()
+          imEyeL = imEyeL.cuda()
+          imEyeR = imEyeR.cuda()
+          faceGrid = faceGrid.cuda()
+          imFace = torch.autograd.Variable(imFace, requires_grad = True)
+          imEyeL = torch.autograd.Variable(imEyeL, requires_grad = True)
+          imEyeR = torch.autograd.Variable(imEyeR, requires_grad = True)
+          faceGrid = torch.autograd.Variable(faceGrid, requires_grad = True)
+          output = model(imFace, imEyeL, imEyeR, faceGrid)
+          estimations.append(output)
+        return estimations
+    
+        
