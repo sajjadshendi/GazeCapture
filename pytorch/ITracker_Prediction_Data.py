@@ -180,6 +180,7 @@ class ITracker_Prediction_Data():
           imEyeL = image[1]
           imEyeR = image[2]
           faceGrid = image[3]
+          faceGrid = torch.FloatTensor(faceGrid)
           imFace = imFace.cuda()
           imEyeL = imEyeL.cuda()
           imEyeR = imEyeR.cuda()
