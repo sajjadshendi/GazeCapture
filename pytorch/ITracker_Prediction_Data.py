@@ -176,10 +176,10 @@ class ITracker_Prediction_Data():
         data = self.prepare()
         estimations = []
         for image in data:
-          imFace = data[0]
-          imEyeL = data[1]
-          imEyeR = data[2]
-          faceGrid = data[3]
+          imFace = image[0]
+          imEyeL = image[1]
+          imEyeR = image[2]
+          faceGrid = image[3]
           imFace = imFace.cuda()
           imEyeL = imEyeL.cuda()
           imEyeR = imEyeR.cuda()
