@@ -50,19 +50,19 @@ class ITracker_Prediction_Data():
       self.eyeRightMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_right_224.mat'))['image_mean']
       
       self.transformFace = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize(self.imSize, antialias=True),
-            SubtractMean(meanImg=self.eyeRightMean)
+             transforms.ToTensor(),
+             transforms.Resize(self.imSize, antialias=True),
+             SubtractMean(meanImg=self.faceMean)
       ])
       self.transformEyeL = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize(self.imSize, antialias=True),
-            SubtractMean(meanImg=self.eyeRightMean)
+             transforms.ToTensor(),
+             transforms.Resize(self.imSize, antialias=True),
+             SubtractMean(meanImg=self.eyeLeftMean)
       ])
       self.transformEyeR = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize(self.imSize, antialias=True),
-            SubtractMean(meanImg=self.eyeRightMean)
+             transforms.ToTensor(),
+             transforms.Resize(self.imSize, antialias=True),
+             SubtractMean(meanImg=self.eyeRightMean)
       ])
 
     
