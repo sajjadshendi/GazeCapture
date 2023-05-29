@@ -106,48 +106,50 @@ class ITracker_Prediction_Data():
         face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
         eye_cascade = cv2.CascadeClassifier('haarcascade_eye_tree_eyeglasses.xml')
         face_coordinates = face_cascade.detectMultiScale(gray, 1.1, 10)
-        face = frame[0:1, 0:1]
-        face_gray = gray[0:1, 0:1]
-        for (x, y, w, h) in face_coordinates:
-            face_gray = gray[y:y + h, x:x + w]
-            face = frame[y:y + h, x:x + w]
-        eye_coordinates_unsorted = eye_cascade.detectMultiScale(face_gray)
-        if(eye_coordinates_unsorted.shape == (2,4)):
-            eye_coordinates = []
-            if(eye_coordinates_unsorted[0][0] > eye_coordinates_unsorted[1][0]):
-                eye_coordinates.append(eye_coordinates_unsorted[1])
-                eye_coordinates.append(eye_coordinates_unsorted[0])
-            else:
-                eye_coordinates.append(eye_coordinates_unsorted[0])
-                eye_coordinates.append(eye_coordinates_unsorted[1])
-            count = 0
-            left_eye = face[0:1, 0:1]
-            right_eye = face[0:1, 0:1]
-            for (ex,ey,ew,eh) in eye_coordinates:
-                if(count == 0):
-                    left_eye = face[ey:ey + eh, ex:ex + ew]
-                else:
-                    right_eye = face[ey:ey + eh, ex:ex + ew]
-                count += 1
-                
-            
-            gridLen = self.gridSize[0] * self.gridSize[1]
-            grid = np.zeros([gridLen,], np.float32)
-            height = frame.shape[0]
-            width = frame.shape[1]
+        if(face_coordinates.shape == (1,4)):
+            face = frame[0:1, 0:1]
+            face_gray = gray[0:1, 0:1]
             for (x, y, w, h) in face_coordinates:
-                x = self.gridSize[0] * ((x+1) / width)
-                y = self.gridSize[0] * ((y+1) / height)
-                w = w * (self.gridSize[0] / width)
-                h = h * (self.gridSize[0] / height)
-            for i in range(int(x-1), int(x+w)):
-                for j in range(int(y-1), int(y+h)):
-                    grid[((j-1) * self.gridSize[0]) + (i)] = 1
-            
-            return face, left_eye, right_eye, grid, True
+                face_gray = gray[y:y + h, x:x + w]
+                face = frame[y:y + h, x:x + w]
+            eye_coordinates_unsorted = eye_cascade.detectMultiScale(face_gray)
+            if(eye_coordinates_unsorted.shape == (2,4)):
+                eye_coordinates = []
+                if(eye_coordinates_unsorted[0][0] > eye_coordinates_unsorted[1][0]):
+                    eye_coordinates.append(eye_coordinates_unsorted[1])
+                    eye_coordinates.append(eye_coordinates_unsorted[0])
+                else:
+                    eye_coordinates.append(eye_coordinates_unsorted[0])
+                    eye_coordinates.append(eye_coordinates_unsorted[1])
+                count = 0
+                left_eye = face[0:1, 0:1]
+                right_eye = face[0:1, 0:1]
+                for (ex,ey,ew,eh) in eye_coordinates:
+                    if(count == 0):
+                        left_eye = face[ey:ey + eh, ex:ex + ew]
+                    else:
+                        right_eye = face[ey:ey + eh, ex:ex + ew]
+                    count += 1
+                    
+                
+                gridLen = self.gridSize[0] * self.gridSize[1]
+                grid = np.zeros([gridLen,], np.float32)
+                height = frame.shape[0]
+                width = frame.shape[1]
+                for (x, y, w, h) in face_coordinates:
+                    x = self.gridSize[0] * ((x+1) / width)
+                    y = self.gridSize[0] * ((y+1) / height)
+                    w = w * (self.gridSize[0] / width)
+                    h = h * (self.gridSize[0] / height)
+                for i in range(int(x-1), int(x+w)):
+                    for j in range(int(y-1), int(y+h)):
+                        grid[((j-1) * self.gridSize[0]) + (i)] = 1
+                
+                return face, left_eye, right_eye, grid, True
+            else:
+              return False, False, False, False, False
         else:
           return False, False, False, False, False
-    
   
     
     def prepare(self):
