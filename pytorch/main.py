@@ -9,6 +9,7 @@ import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
 import torchvision.datasets as datasets
 import torchvision.models as models
 
@@ -74,6 +75,21 @@ count_test = 0
 count = 0
 
 
+def draw(predicts):
+    x = []
+    y = []
+    n = []
+    for point in predicts:
+      x.append(point[0][0].cpu().item())
+      y.append(point[0][1].cpu().item())
+    for i in range(len(x)):
+      n.append(str(i))
+    fig, ax = plt.subplots()
+    ax.scatter(x, y)
+    
+    for j, txt in enumerate(n):
+      ax.annotate(txt, (x[j], y[j]))
+    plt.savefig("result")
 
 def main():
     global args, best_prec1, weight_decay, momentum
@@ -129,7 +145,9 @@ def main():
         return
     
     if doPredict:
-        print(dataPredict.process(model))
+        predicts = dataPredict.process(model)
+        print(predicts)
+        draw(predicts)
         return
 
     for epoch in range(0, epoch):
@@ -152,6 +170,7 @@ def main():
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
         }, is_best)
+
 
 
 def train(train_loader, model, criterion,optimizer, epoch):
