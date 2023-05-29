@@ -88,7 +88,7 @@ class ITracker_Prediction_Data():
       success = 1
      
     
-      while success:
+      while (success):
   
           # vidObj object calls read
           # function extract frames
@@ -186,11 +186,15 @@ class ITracker_Prediction_Data():
           imEyeR = imEyeR.cuda()
           faceGrid = faceGrid.cuda()
           imFace = torch.autograd.Variable(imFace, requires_grad = True)
+          imFace = torch.unsqueeze(imFace, 0)
           imEyeL = torch.autograd.Variable(imEyeL, requires_grad = True)
+          imEyeL = torch.unsqueeze(imEyeL, 0)
           imEyeR = torch.autograd.Variable(imEyeR, requires_grad = True)
+          imEyeR = torch.unsqueeze(imEyeR, 0)
           faceGrid = torch.autograd.Variable(faceGrid, requires_grad = True)
-          output = model(imFace, imEyeL, imEyeR, faceGrid)
-          print(output)
+          faceGrid = torch.unsqueeze(faceGrid, 0)
+          with torch.no_grad():
+              output = model(imFace, imEyeL, imEyeR, faceGrid)
           estimations.append(output)
         return estimations
     
