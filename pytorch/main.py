@@ -145,9 +145,9 @@ def main():
         return
     
     if doPredict:
-        predicts = dataPredict.process(model)
-        print(predicts)
-        draw(predicts)
+        raw_predicts = dataPredict.process(model)
+        print(raw_predicts)
+        draw(raw_predicts)
         return
 
     for epoch in range(0, epoch):
