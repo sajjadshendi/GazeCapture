@@ -75,9 +75,46 @@ lr = base_lr
 count_test = 0
 count = 0
 
-def transform_predicts(raw_predicts):
+def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
     apple_device_data = pd.read_csv("apple_device_data.csv")
-    print(apple_device_data)
+    xCam = xCam * 10
+    yCam = yCam * 10
+    xCurr = xCam
+    yCurr = yCam
+    oCurr = orientation
+    screenWCurr = screenW
+    screenHCurr = screenH
+    row = apple_device_data.loc[apple_device_data["DeviceName"] == device]
+    dX = row["DeviceCameraToScreenXMm"]
+    dY = row["DeviceCameraToScreenYMm"]
+    dW = row["DeviceScreenWidthMm"]
+    dH = row["DeviceScreenHeightMm"]
+    if(oCurr == 1):
+        xCurr = xCurr + dX
+        yCurr =  -yCurr - dY
+    elif(oCurr == 2):
+        xCurr = xCurr - dX + dW
+        yCurr = -yCurr + dY + dH
+    elif(oCurr == 3):
+        xCurr = xCurr - dY
+        yCurr = -yCurr - dX + dW
+    else:
+        xCurr = xCurr + dY + dH
+        yCurr = -yCurr + dX
+    
+    if(oCurr == 1 or oCurr == 2):
+        xCurr = xCurr * (screenWCurr / dW)
+        yCurr = yCurr * (screenHCurr / dH)
+    
+    if(oCurr == 1 or oCurr == 2):
+        xCurr = xCurr * (screenWCurr / dH);
+        yCurr = yCurr * (screenHCurr / dW);
+
+    xScreen = xCurr
+    yScreen = yCurr
+    xScreen = xScreen / 10
+    yScreen = yScreen / 10
+    return xScreen, yScreen
 
 def draw(predicts):
     x = []
@@ -151,7 +188,15 @@ def main():
     if doPredict:
         raw_predicts = dataPredict.process(model)
         print(raw_predicts)
-        draw(raw_predicts)
+        predicts = []
+        for raw_predict in raw_predicts:
+            predict = []
+            x, y = transform_predicts(raw_predict[0], raw_predict[1], 1, "iPhone 6s Plus", 683.6, 1215.4)
+            predict.append(x)
+            predict.append(y)
+            predicts.append(predict)
+        print(predicts)
+        draw(predicts)
         return
 
     for epoch in range(0, epoch):
