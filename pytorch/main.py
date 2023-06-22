@@ -1,5 +1,6 @@
 import math, shutil, os, time, argparse
 import numpy as np
+import pandas as pd
 import scipy.io as sio
 
 import torch
@@ -74,6 +75,9 @@ lr = base_lr
 count_test = 0
 count = 0
 
+def transform_predicts(raw_predicts):
+    apple_device_data = pd.read_csv("apple_device_data.csv")
+    print(apple_device_data)
 
 def draw(predicts):
     x = []
