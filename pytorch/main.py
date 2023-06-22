@@ -97,7 +97,6 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
     dW = row["DeviceScreenWidthMm"]
     dH = row["DeviceScreenHeightMm"]
     if(oCurr == 1):
-        print("aa")
         xCurr = xCurr + dX
         yCurr =  -yCurr - dY
     elif(oCurr == 2):
@@ -199,7 +198,7 @@ def main():
         predicts = []
         for raw_predict in raw_predicts:
             predict = []
-            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), args.orientation, "iPhone 6s Plus", args.screenW, args.screenH)
+            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), "iPhone 6s Plus", float(args.screenW), float(args.screenH))
             predict.append(x.item())
             predict.append(y.item())
             predicts.append(predict)
