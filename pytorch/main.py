@@ -121,8 +121,8 @@ def draw(predicts):
     y = []
     n = []
     for point in predicts:
-      x.append(point[0][0].cpu().item())
-      y.append(point[0][1].cpu().item())
+      x.append(point[0])
+      y.append(point[1])
     for i in range(len(x)):
       n.append(str(i))
     fig, ax = plt.subplots()
@@ -191,9 +191,9 @@ def main():
         predicts = []
         for raw_predict in raw_predicts:
             predict = []
-            x, y = transform_predicts(raw_predict[0], raw_predict[1], 1, "iPhone 6s Plus", 683.6, 1215.4)
-            predict.append(x)
-            predict.append(y)
+            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), 1, "iPhone 6s Plus", 683.6, 1215.4)
+            predict.append(x.item())
+            predict.append(y.item())
             predicts.append(predict)
         print(predicts)
         draw(predicts)
