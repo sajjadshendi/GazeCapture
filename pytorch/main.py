@@ -53,6 +53,13 @@ parser.add_argument('--data_path', help="Path to processed dataset. It should co
 parser.add_argument('--sink', type=str2bool, nargs='?', const=True, default=False, help="Just sink and terminate.")
 parser.add_argument('--reset', type=str2bool, nargs='?', const=True, default=False, help="Start from scratch (do not load).")
 parser.add_argument('--predict', type=str2bool, nargs='?', const=True, default=False, help="use model for predicting")
+parser.add_argument('--orientation', help='''Orientation: The orientation of the interface, as described by the enumeration UIInterfaceOrientation, where:
+                                                1: portrait
+                                                2: portrait, upside down (iPad only)
+                                                3: landscape, with home button on the right
+                                                4: landscape, with home button on the left''')
+parser.add_argument('--screenW')
+parser.add_argument('--screenH')
 args = parser.parse_args()
 
 # Change there flags to control what happens.
@@ -82,14 +89,15 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
     xCurr = xCam
     yCurr = yCam
     oCurr = orientation
-    screenWCurr = screenW
-    screenHCurr = screenH
+    screenWCurr = screenW * 10
+    screenHCurr = screenH * 10
     row = apple_device_data.loc[apple_device_data["DeviceName"] == device]
     dX = row["DeviceCameraToScreenXMm"]
     dY = row["DeviceCameraToScreenYMm"]
     dW = row["DeviceScreenWidthMm"]
     dH = row["DeviceScreenHeightMm"]
     if(oCurr == 1):
+        print("aa")
         xCurr = xCurr + dX
         yCurr =  -yCurr - dY
     elif(oCurr == 2):
@@ -106,7 +114,7 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
         xCurr = xCurr * (screenWCurr / dW)
         yCurr = yCurr * (screenHCurr / dH)
     
-    if(oCurr == 1 or oCurr == 2):
+    if(oCurr == 3 or oCurr == 4):
         xCurr = xCurr * (screenWCurr / dH);
         yCurr = yCurr * (screenHCurr / dW);
 
@@ -191,7 +199,7 @@ def main():
         predicts = []
         for raw_predict in raw_predicts:
             predict = []
-            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), 1, "iPhone 6s Plus", 683.6, 1215.4)
+            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), args.orientation, "iPhone 6s Plus", args.screenW, args.screenH)
             predict.append(x.item())
             predict.append(y.item())
             predicts.append(predict)
