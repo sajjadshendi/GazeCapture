@@ -123,7 +123,7 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
     yScreen = yScreen / 10
     return xScreen, yScreen
 
-def draw(predicts, screenW, screenH):
+def draw(predicts, screenW, screenH, orientation):
     x = []
     y = []
     n = []
@@ -135,8 +135,12 @@ def draw(predicts, screenW, screenH):
     fig, ax = plt.subplots()
     ax.scatter(x, y)
     ax.set_aspect('equal', adjustable='box')
-    ax.set_xlim((0, screenW))
-    ax.set_ylim((0, screenH))
+    if(orientation == 1 or orientation == 2):
+        ax.set_xlim((0, screenW))
+        ax.set_ylim((0, screenH))
+    else:
+        ax.set_xlim((0, screenH))
+        ax.set_ylim((0, screenW))
     ax.grid(True)
     
     for j, txt in enumerate(n):
@@ -207,7 +211,7 @@ def main():
             predict.append(y.item())
             predicts.append(predict)
         print(predicts)
-        draw(predicts, float(args.screenW), float(args.screenH))
+        draw(predicts, float(args.screenW), float(args.screenH), int(args.orientation))
         return
 
     for epoch in range(0, epoch):
