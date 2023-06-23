@@ -134,7 +134,8 @@ def draw(predicts, screenW, screenH):
       n.append(str(i))
     fig, ax = plt.subplots()
     ax.scatter(x, y)
-    ax.set_xlim((0, screenH))
+    ax.set_aspect('equal', adjustable='box')
+    ax.set_xlim((0, screenW))
     ax.set_ylim((0, screenH))
     ax.grid(True)
     
