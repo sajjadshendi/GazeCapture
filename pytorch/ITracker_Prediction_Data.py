@@ -106,6 +106,7 @@ class ITracker_Prediction_Data():
         face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
         eye_cascade = cv2.CascadeClassifier('haarcascade_eye_tree_eyeglasses.xml')
         face_coordinates = face_cascade.detectMultiScale(gray, 1.1, 10)
+        face_coordinates = np.asarray(face_coordinates)
         if(face_coordinates.shape == (1,4)):
             face = frame[0:1, 0:1]
             face_gray = gray[0:1, 0:1]
@@ -113,6 +114,7 @@ class ITracker_Prediction_Data():
                 face_gray = gray[y:y + h, x:x + w]
                 face = frame[y:y + h, x:x + w]
             eye_coordinates_unsorted = eye_cascade.detectMultiScale(face_gray)
+            eye_coordinates_unsorted = np.asarray(eye_coordinates_unsorted)
             if(eye_coordinates_unsorted.shape == (2,4)):
                 eye_coordinates = []
                 if(eye_coordinates_unsorted[0][0] > eye_coordinates_unsorted[1][0]):
