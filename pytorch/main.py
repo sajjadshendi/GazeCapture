@@ -17,6 +17,7 @@ import torchvision.models as models
 from ITrackerData import ITrackerData
 from ITrackerModel import ITrackerModel
 from ITracker_Prediction_Data import ITracker_Prediction_Data
+from Device import Device
 
 '''
 Train/test code for iTracker.
@@ -203,12 +204,14 @@ def main():
         return
     
     if doPredict:
+        obj = Device(float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy), "apple_device_data.csv")
+        device = obj.pick_device()
         raw_predicts = dataPredict.process(model)
         print(raw_predicts)
         predicts = []
         for raw_predict in raw_predicts:
             predict = []
-            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), "iPhone 6s Plus", float(args.screenW), float(args.screenH))
+            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), device, float(args.screenW), float(args.screenH))
             predict.append(x.item())
             predict.append(y.item())
             predicts.append(predict)
