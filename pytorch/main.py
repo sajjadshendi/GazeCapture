@@ -206,6 +206,7 @@ def main():
     if doPredict:
         obj = Device(float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy), "apple_device_data.csv")
         device = obj.pick_device()
+        print("your device is " + device)
         raw_predicts = dataPredict.process(model)
         print(raw_predicts)
         predicts = []
