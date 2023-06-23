@@ -123,17 +123,20 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
     yScreen = yScreen / 10
     return xScreen, yScreen
 
-def draw(predicts):
+def draw(predicts, screenW, screenH):
     x = []
     y = []
     n = []
     for point in predicts:
-      x.append(point[0])
-      y.append(point[1])
+      x.append(point[1])
+      y.append(screenH - point[0])
     for i in range(len(x)):
       n.append(str(i))
     fig, ax = plt.subplots()
     ax.scatter(x, y)
+    ax.set_xlim((0, screenH))
+    ax.set_ylim((0, screenH))
+    ax.grid(True)
     
     for j, txt in enumerate(n):
       ax.annotate(txt, (x[j], y[j]))
@@ -203,7 +206,7 @@ def main():
             predict.append(y.item())
             predicts.append(predict)
         print(predicts)
-        draw(predicts)
+        draw(predicts, float(args.screenW), float(args.screenH))
         return
 
     for epoch in range(0, epoch):
