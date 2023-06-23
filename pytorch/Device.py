@@ -8,23 +8,22 @@ class Device():
         self.dX = dX
         self.dY = dY
         self.path = devices_information_path
-        self.devce = ""
+        self.device = ""
 
     def pick_device(self):
         table = pd.read_csv(self.path)
-        print(table)
         count = len(table["DeviceName"])
-        print(count)
         min = 0
         i_min = 0
         for i in range(count):
             row = table.iloc[i]
-            indicator = math.abs(row["DeviceScreenWidthMm"] - (screenW*10)) + math.abs(row["DeviceScreenHeightMm"] - (screenH*10)) + math.abs(row["DeviceCameraToScreenXMm"] - (dX*10))*10 + math.abs(row["DeviceCameraToScreenYMm"] - (dY*10)*10)
+            indicator = math.fabs(row["DeviceScreenWidthMm"] - (self.screenW*10)) + math.fabs(row["DeviceScreenHeightMm"] - (self.screenH*10)) + math.fabs(row["DeviceCameraToScreenXMm"] - (self.dX*10))*10 + math.fabs(row["DeviceCameraToScreenYMm"] - (self.dY*10))*10
             if(i == 0):
                 min = indicator
             else:
                 if(min > indicator):
                     i_min = i
                     min = indicator
-                    self.device = row["DeviceName"]
+        key_row = table.iloc[i_min]
+        self.device = key_row["DeviceName"]
         return self.device
