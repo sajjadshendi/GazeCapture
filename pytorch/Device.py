@@ -2,7 +2,7 @@ import pandas as pd
 import math
 
 class Device():
-    def __init__(screenW, screenH, dX, dY, devices_information_path):
+    def __init__(self, screenW, screenH, dX, dY, devices_information_path):
         self.screenW = screenW
         self.screenH = screenH
         self.dX = dX
@@ -10,8 +10,8 @@ class Device():
         self.path = devices_information_path
         self.devce = ""
 
-    def pick_device():
-        table = pd.read_csv(path)
+    def pick_device(self):
+        table = pd.read_csv(self.path)
         print(table)
         count = len(table["DeviceName"])
         print(count)
