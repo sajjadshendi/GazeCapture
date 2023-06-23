@@ -60,6 +60,8 @@ parser.add_argument('--orientation', help='''Orientation: The orientation of the
                                                 4: landscape, with home button on the left''')
 parser.add_argument('--screenW')
 parser.add_argument('--screenH')
+parser.add_argument('--CtoSx')
+parser.add_argument('--CtoSy')
 args = parser.parse_args()
 
 # Change there flags to control what happens.
