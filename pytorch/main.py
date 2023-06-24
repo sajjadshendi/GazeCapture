@@ -139,8 +139,11 @@ def draw(predicts, screenW, screenH, orientation):
     y = []
     n = []
     for point in predicts:
-      x.append(point[1])
-      y.append(screenH - point[0])
+      x.append(point[0])
+      if(orientation == 1 or orientation == 2):
+          y.append(screenH - point[1])
+      else:
+          y.append(screenW - point[1])
     for i in range(len(x)):
       n.append(str(i))
     fig, ax = plt.subplots()
