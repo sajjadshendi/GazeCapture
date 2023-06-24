@@ -63,12 +63,14 @@ parser.add_argument('--screenW')
 parser.add_argument('--screenH')
 parser.add_argument('--CtoSx')
 parser.add_argument('--CtoSy')
+parser.add_argument('--custom', type=str2bool, nargs='?', const=True, default=False, help="use specific parameters")
 args = parser.parse_args()
 
 # Change there flags to control what happens.
 doLoad = not args.reset # Load checkpoint at the beginning
 doTest = args.sink # Only run test, no training
 doPredict = args.predict # predict gaze estimation
+doCustom = args.custom
 
 workers = 2
 epochs = 25
@@ -85,7 +87,7 @@ lr = base_lr
 count_test = 0
 count = 0
 
-def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
+def transform_predicts(xCam, yCam, orientation, device, screenW, screenH, flag = False, CX = 0, CY = 0):
     apple_device_data = pd.read_csv("apple_device_data.csv")
     xCam = xCam * 10
     yCam = yCam * 10
@@ -94,11 +96,17 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH):
     oCurr = orientation
     screenWCurr = screenW * 10
     screenHCurr = screenH * 10
-    row = apple_device_data.loc[apple_device_data["DeviceName"] == device]
-    dX = row["DeviceCameraToScreenXMm"]
-    dY = row["DeviceCameraToScreenYMm"]
-    dW = row["DeviceScreenWidthMm"]
-    dH = row["DeviceScreenHeightMm"]
+    if(flag):
+        dX = CX
+        dY = CY
+        dW = screenWCurr
+        dH = screenHCurr
+    else:
+        row = apple_device_data.loc[apple_device_data["DeviceName"] == device]
+        dX = row["DeviceCameraToScreenXMm"]
+        dY = row["DeviceCameraToScreenYMm"]
+        dW = row["DeviceScreenWidthMm"]
+        dH = row["DeviceScreenHeightMm"]
     if(oCurr == 1):
         xCurr = xCurr + dX
         yCurr =  -yCurr - dY
@@ -204,17 +212,23 @@ def main():
         return
     
     if doPredict:
-        obj = Device(float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy), "apple_device_data.csv")
-        device = obj.pick_device()
-        print("your device is " + device)
+        if(not doCustom):
+            obj = Device(float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy), "apple_device_data.csv")
+            device = obj.pick_device()
+            print("your device is " + device)
         raw_predicts = dataPredict.process(model)
         print(raw_predicts)
         predicts = []
         for raw_predict in raw_predicts:
             predict = []
-            x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), device, float(args.screenW), float(args.screenH))
-            predict.append(x.item())
-            predict.append(y.item())
+            if(not doCustom):
+                x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), device, float(args.screenW), float(args.screenH))
+                predict.append(x.item())
+                predict.append(y.item())
+            else:
+                x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), "", float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy))
+                predict.append(x)
+                predict.append(y)
             predicts.append(predict)
         print(predicts)
         draw(predicts, float(args.screenW), float(args.screenH), int(args.orientation))
