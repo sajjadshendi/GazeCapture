@@ -97,8 +97,8 @@ def transform_predicts(xCam, yCam, orientation, device, screenW, screenH, flag =
     screenWCurr = screenW * 10
     screenHCurr = screenH * 10
     if(flag):
-        dX = CX
-        dY = CY
+        dX = CX * 10
+        dY = CY * 10
         dW = screenWCurr
         dH = screenHCurr
     else:
@@ -226,7 +226,7 @@ def main():
                 predict.append(x.item())
                 predict.append(y.item())
             else:
-                x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), "", float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy))
+                x, y = transform_predicts(raw_predict[0][0].item(), raw_predict[0][1].item(), int(args.orientation), "", float(args.screenW), float(args.screenH), doCustom, float(args.CtoSx), float(args.CtoSy))
                 predict.append(x)
                 predict.append(y)
             predicts.append(predict)
