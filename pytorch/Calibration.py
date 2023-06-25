@@ -50,3 +50,8 @@ class Calibration():
                                 momentum=self.momentum,
                                 weight_decay=self.weight_decay)
         
+    def adjust_learning_rate(self, optimizer, epoch):
+        """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
+        self.lr = self.base_lr * (0.1 ** (epoch // 30))
+        for param_group in optimizer.state_dict()['param_groups']:
+            param_group['lr'] = self.lr
