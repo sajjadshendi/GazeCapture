@@ -1,4 +1,6 @@
 import torch
+import time
+import torch.nn as nn
 from ITrackerData import ITrackerData
 
 class AverageMeter(object):
@@ -30,6 +32,7 @@ class Calibration():
         self.momentum = 0.9
         self.weight_decay = 1e-4
         self.lr = base_lr
+        self.count = 0
 
     def Calibr(self):
         dataTrain = ITrackerData(dataPath = self.calibr_path, split='train', imSize = self.imSize)
@@ -58,9 +61,60 @@ class Calibration():
             self.adjust_learning_rate(optimizer, epoch)
 
             # train for one epoch
-            train(train_loader, self.model, criterion, optimizer, epoch)
+            train(train_loader, criterion, optimizer, epoch)
 
         return self.model
+
+    def train(train_loader, criterion,optimizer, epoch):
+        batch_time = AverageMeter()
+        data_time = AverageMeter()
+        losses = AverageMeter()
+
+        # switch to train mode
+        self.model.train()
+
+        end = time.time()
+
+        for i, (row, imFace, imEyeL, imEyeR, faceGrid, gaze) in enumerate(train_loader):
+        
+            # measure data loading time
+            data_time.update(time.time() - end)
+            imFace = imFace.cuda()
+            imEyeL = imEyeL.cuda()
+            imEyeR = imEyeR.cuda()
+            faceGrid = faceGrid.cuda()
+            gaze = gaze.cuda()
+        
+            imFace = torch.autograd.Variable(imFace, requires_grad = True)
+            imEyeL = torch.autograd.Variable(imEyeL, requires_grad = True)
+            imEyeR = torch.autograd.Variable(imEyeR, requires_grad = True)
+            faceGrid = torch.autograd.Variable(faceGrid, requires_grad = True)
+            gaze = torch.autograd.Variable(gaze, requires_grad = False)
+
+            # compute output
+            output = self.model(imFace, imEyeL, imEyeR, faceGrid)
+
+            loss = criterion(output, gaze)
+        
+            losses.update(loss.data.item(), imFace.size(0))
+
+            # compute gradient and do SGD step
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            # measure elapsed time
+            batch_time.update(time.time() - end)
+            end = time.time()
+
+            self.count=self.count+1
+
+            print('Epoch (train): [{0}][{1}/{2}]\t'
+                'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+                'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
+                'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
+                epoch, i, len(train_loader), batch_time=batch_time,
+                data_time=data_time, loss=losses))
         
     def adjust_learning_rate(self, optimizer, epoch):
         """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
