@@ -64,24 +64,15 @@ class SubtractMean(object):
 
 
 
-class ITrackerData(data.Dataset):
-    def __init__(self, dataPath, split = "train", imSize=(224,224), gridSize=(25, 25)):
+class ITrackerData_Calibr(data.Dataset):
+    def __init__(self, dataPath, imSize=(224,224), gridSize=(25, 25)):
         
-        self.split = split
         self.dataPath = dataPath
         self.imSize = imSize
         self.gridSize = gridSize
         self.npzfile = np.load(dataPath)
-        self.train_eye_left = self.npzfile["train_eye_left"]
-        self.train_eye_right = self.npzfile["train_eye_right"]
-        self.train_face = self.npzfile["train_face"]
-        self.train_face_mask = self.npzfile["train_face_mask"]
-        self.train_y = self.npzfile["train_y"]
-        self.val_eye_left = self.npzfile["val_eye_left"]
-        self.val_eye_right = self.npzfile["val_eye_right"]
-        self.val_face = self.npzfile["val_face"]
-        self.val_face_mask = self.npzfile["val_face_mask"]
-        self.val_y = self.npzfile["val_y"]
+        self.images = self.npzfile["images"]
+        self.y = self.npzfile["y"]
 
         self.faceMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_face_224.mat'))['image_mean']
         self.eyeLeftMean = loadMetadata(os.path.join(MEAN_PATH, 'mean_left_224.mat'))['image_mean']
@@ -104,10 +95,7 @@ class ITrackerData(data.Dataset):
         ])
         
 
-        if(split == "train"):
-            self.indices = np.arange(len(self.train_y))
-        else:
-            self.indices = np.arange(len(self.val_y))
+        self.indices = np.arange(len(self.y))
 
     #def loadImage(self, image_array):
         #try:
