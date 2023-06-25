@@ -158,6 +158,28 @@ class ITrackerData_Calibr(data.Dataset):
         else:
           return False, False, False, False, False
 
+    def prepare(self):
+        data = []
+        for image in self.images:
+            per_image = []
+            face, left_eye, right_eye, grid, flag = self.Frame_Process(image)
+            if(not flag):
+                continue
+            imFace = self.loadImage(face)
+            imEyeL = self.loadImage(left_eye)
+            imEyeR = self.loadImage(right_eye)
+
+            imFace = self.transformFace(imFace)
+            imEyeL = self.transformEyeL(imEyeL)
+            imEyeR = self.transformEyeR(imEyeR)
+            per_image.append(imFace)
+            per_image.append(imEyeL)
+            per_image.append(imEyeR)
+            per_image.append(grid)
+            data.append(per_image)
+        return data
+
+    
     def makeGrid(self, params):
         gridLen = self.gridSize[0] * self.gridSize[1]
         grid = np.zeros([gridLen,], np.float32)
