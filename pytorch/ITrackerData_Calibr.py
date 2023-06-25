@@ -96,13 +96,14 @@ class ITrackerData_Calibr(data.Dataset):
         
 
         self.indices = np.arange(len(self.y))
+        self.data = self.prepare()
 
-    def loadImage(self, image_array):
+    def loadImage(self, array):
         try:
-            im = Image.open(image_array).convert('RGB')
+            im = Image.fromarray(array).convert('RGB')
         except OSError:
-            raise RuntimeError('Could not read image: ')
-            im = Image.new("RGB", self.imSize, "white")
+            raise RuntimeError('Could not read image: ' + array)
+            #im = Image.new("RGB", self.imSize, "white")
 
         return im
 
@@ -179,39 +180,17 @@ class ITrackerData_Calibr(data.Dataset):
             data.append(per_image)
         return data
 
-    
-    def makeGrid(self, params):
-        gridLen = self.gridSize[0] * self.gridSize[1]
-        grid = np.zeros([gridLen,], np.float32)
-        
-        place = 0
-        for i in range(self.gridSize[0]):
-            for j in range(self.gridSize[1]):
-                grid[place] = params[i][j]
-                place += 1
-        return grid
 
     def __getitem__(self, index):
         index = self.indices[index]
 
-        if(self.split == "train"):
             
-            imFace = self.transformFace(Image.fromarray(self.train_face[index]))
-            imEyeL = self.transformEyeL(Image.fromarray(self.train_eye_left[index]))
-            imEyeR = self.transformEyeR(Image.fromarray(self.train_eye_right[index]))
-            gaze = np.array([self.train_y[index][0], self.train_y[index][1]], np.float32)
+        imFace = self.data[index][0]
+        imEyeL = self.data[ndex][1]
+        imEyeR = self.data[index][2]
+        gaze = np.array([self.y[index][0], self.y[index][1]], np.float32)
 
-            faceGrid = self.makeGrid(self.train_face_mask[index])
-        
-        else:
-
-
-            imFace = self.transformFace(Image.fromarray(self.val_face[index]))
-            imEyeL = self.transformEyeL(Image.fromarray(self.val_eye_left[index]))
-            imEyeR = self.transformEyeR(Image.fromarray(self.val_eye_right[index]))
-            gaze = np.array([self.train_y[index][0], self.train_y[index][1]], np.float32)
-
-            faceGrid = self.makeGrid(self.val_face_mask[index])
+        faceGrid = self.data[index][3]
         
 
         # to tensor
