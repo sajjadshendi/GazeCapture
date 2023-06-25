@@ -1,12 +1,9 @@
+from ITrackerData import ITrackerData
 class Calibration():
-    def __init__(frames, xlabels, ylabels, model):
+    def __init__(calibr_path, model, imSize):
         self.model = model
-        self.frames = frames
-        self.xlabels = xlabels
-        self.ylabels = ylabels
+        self.calibr_pah = calibr_path
+        self.imSize = imSize
 
-    def Calibr():
-        for i in range(len(self.frames)):
-            frame = self.frames[i]
-            xlabel = self.xlabels[i]
-            ylabel = self.ylabels[i]
+    def Calibr(self):
+        dataTrain = ITrackerData(dataPath = self.calibr_path, split='train', imSize = self.imSize)
