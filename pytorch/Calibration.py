@@ -23,7 +23,7 @@ class AverageMeter(object):
 class Calibration():
     def __init__(self, calibr_path, model, imSize):
         self.model = model
-        self.calibr_pah = calibr_path
+        self.calibr_path = calibr_path
         self.imSize = imSize
         self.workers = 2
         self.epochs = 25
@@ -31,7 +31,7 @@ class Calibration():
         self.base_lr = 0.0001
         self.momentum = 0.9
         self.weight_decay = 1e-4
-        self.lr = base_lr
+        self.lr = self.base_lr
         self.count = 0
 
     def Calibr(self):
@@ -57,7 +57,7 @@ class Calibration():
             self.adjust_learning_rate(optimizer, epoch)
 
             # train for one epoch
-            train(train_loader, criterion, optimizer, epoch)
+            self.train(train_loader, criterion, optimizer, epoch)
 
         return self.model
 
