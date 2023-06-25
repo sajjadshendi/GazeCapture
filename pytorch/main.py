@@ -17,6 +17,7 @@ import torchvision.models as models
 from ITrackerData import ITrackerData
 from ITrackerModel import ITrackerModel
 from ITracker_Prediction_Data import ITracker_Prediction_Data
+from Calibration import Calibration
 from Device import Device
 
 '''
@@ -63,6 +64,7 @@ parser.add_argument('--screenW')
 parser.add_argument('--screenH')
 parser.add_argument('--CtoSx')
 parser.add_argument('--CtoSy')
+parser.add_argument('--calibr_path')
 parser.add_argument('--custom', type=str2bool, nargs='?', const=True, default=False, help="use specific parameters")
 args = parser.parse_args()
 
@@ -258,7 +260,9 @@ def main():
             'best_prec1': best_prec1,
         }, is_best)
 
-
+def Calibr(path, model):
+    calibr_obj = Calibration(path, model, (224,224))
+    
 
 def train(train_loader, model, criterion,optimizer, epoch):
     global count
