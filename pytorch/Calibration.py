@@ -39,16 +39,28 @@ class Calibration():
         batch_size=self.batch_size, shuffle=True,
         num_workers=self.workers, pin_memory=True)
 
-      val_loader = torch.utils.data.DataLoader(
-        dataVal,
-        batch_size=self.batch_size, shuffle=False,
-        num_workers=self.workers, pin_memory=True)
+        val_loader = torch.utils.data.DataLoader(
+            dataVal,
+            batch_size=self.batch_size, shuffle=False,
+            num_workers=self.workers, pin_memory=True)
 
-      criterion = nn.MSELoss().cuda()
+        criterion = nn.MSELoss().cuda()
 
-      optimizer = torch.optim.SGD(self.model.parameters(), self.lr,
+        optimizer = torch.optim.SGD(self.model.parameters(), self.lr,
                                 momentum=self.momentum,
                                 weight_decay=self.weight_decay)
+        epoch = 0
+
+        for epoch in range(0, epoch):
+            self.adjust_learning_rate(optimizer, epoch)
+        
+        for epoch in range(epoch, self.epochs):
+            self.adjust_learning_rate(optimizer, epoch)
+
+            # train for one epoch
+            train(train_loader, self.model, criterion, optimizer, epoch)
+
+        return self.model
         
     def adjust_learning_rate(self, optimizer, epoch):
         """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
