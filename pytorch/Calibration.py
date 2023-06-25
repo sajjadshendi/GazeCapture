@@ -21,7 +21,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 class Calibration():
-    def __init__(calibr_path, model, imSize):
+    def __init__(self, calibr_path, model, imSize):
         self.model = model
         self.calibr_pah = calibr_path
         self.imSize = imSize
@@ -42,10 +42,6 @@ class Calibration():
         batch_size=self.batch_size, shuffle=True,
         num_workers=self.workers, pin_memory=True)
 
-        val_loader = torch.utils.data.DataLoader(
-            dataVal,
-            batch_size=self.batch_size, shuffle=False,
-            num_workers=self.workers, pin_memory=True)
 
         criterion = nn.MSELoss().cuda()
 
@@ -65,7 +61,7 @@ class Calibration():
 
         return self.model
 
-    def train(train_loader, criterion,optimizer, epoch):
+    def train(self, train_loader, criterion,optimizer, epoch):
         batch_time = AverageMeter()
         data_time = AverageMeter()
         losses = AverageMeter()
