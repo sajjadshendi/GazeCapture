@@ -97,14 +97,14 @@ class ITrackerData_Calibr(data.Dataset):
 
         self.indices = np.arange(len(self.y))
 
-    #def loadImage(self, image_array):
-        #try:
-            #im = Image.open(image_array).convert('RGB')
-        #except OSError:
-            #raise RuntimeError('Could not read image: ')
-            #im = Image.new("RGB", self.imSize, "white")
+    def loadImage(self, image_array):
+        try:
+            im = Image.open(image_array).convert('RGB')
+        except OSError:
+            raise RuntimeError('Could not read image: ')
+            im = Image.new("RGB", self.imSize, "white")
 
-        #return im
+        return im
 
     def Frame_Process(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
