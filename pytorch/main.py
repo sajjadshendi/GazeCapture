@@ -217,6 +217,7 @@ def main():
         return
     
     if doPredict:
+        model = Calibr_main(args.calibr_path, model)
         if(not doCustom):
             obj = Device(float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy), "apple_device_data.csv")
             device = obj.pick_device()
@@ -260,8 +261,9 @@ def main():
             'best_prec1': best_prec1,
         }, is_best)
 
-def Calibr(path, model):
+def Calibr_main(path, model):
     calibr_obj = Calibration(path, model, (224,224))
+    return calibr_obj.Calibr()
     
 
 def train(train_loader, model, criterion,optimizer, epoch):
