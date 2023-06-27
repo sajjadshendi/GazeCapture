@@ -2,6 +2,7 @@ import torch
 import time
 import torch.nn as nn
 from ITrackerData_Calibr import ITrackerData_Calibr
+from prepare_calibr_file import calibr_file
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -35,8 +36,9 @@ class Calibration():
         self.count = 0
 
     def Calibr(self):
-        dataTrain = ITrackerData_Calibr(dataPath = self.calibr_path, imSize = self.imSize)
-        
+        obj = calibr_file(self.calibr_path)
+        calibr_data = obj.collect_data_and_convert()
+        dataTrain = ITrackerData_Calibr(dataPath = calibr_data, imSize = self.imSize)
         train_loader = torch.utils.data.DataLoader(
         dataTrain,
         batch_size=self.batch_size, shuffle=True,
