@@ -6,6 +6,7 @@ from numpy import asarray
 class calibr_file():
     def __init__(self, Calibr_path):
         self.path = Calibr_path
+        self.output = "calibr_file.npz"
 
     def collect_data_and_convert(self):
         raw_data = pd.read_csv(self.path)
@@ -19,4 +20,5 @@ class calibr_file():
             coordinates.append(row["X"])
             coordinates.append(row["Y"])
             Y.append(coordinates)
-        np.savez("calibr_file.npz", images = images, Y = Y)
+        np.savez(self.output, images = images, Y = Y)
+        return self.output
