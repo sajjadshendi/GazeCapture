@@ -13,7 +13,7 @@ class Calibr_file():
         images = []
         Y = []
         for index, row in raw_data.iterrows():
-            img = Image.open(row["path"])
+            img = Image.open(row["Path"])
             num_img = asarray(img)
             images.append(num_img)
             coordinates = []
