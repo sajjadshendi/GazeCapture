@@ -19,4 +19,4 @@ class calibr_file():
             coordinates.append(row["X"])
             coordinates.append(row["Y"])
             Y.append(coordinates)
-        np.savez("calibr_file", images = images, Y = Y)
+        np.savez("calibr_file.npz", images = images, Y = Y)
