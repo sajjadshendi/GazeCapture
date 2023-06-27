@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 from numpy import asarray
 
-class calibr_file():
+class Calibr_file():
     def __init__(self, Calibr_path):
         self.path = Calibr_path
         self.output = "calibr_file.npz"
