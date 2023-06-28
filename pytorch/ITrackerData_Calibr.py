@@ -182,7 +182,6 @@ class ITrackerData_Calibr(data.Dataset):
             per_image.append(imEyeR)
             per_image.append(grid)
             data.append(per_image)
-            print("aa")
         return data
 
 
