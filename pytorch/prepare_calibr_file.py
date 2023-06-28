@@ -1,7 +1,7 @@
 import pandas as pd
 from PIL import Image
 import numpy as np
-from numpy import asarray
+import cv2
 
 class Calibr_file():
     def __init__(self, Calibr_path):
@@ -13,9 +13,8 @@ class Calibr_file():
         images = []
         Y = []
         for index, row in raw_data.iterrows():
-            img = Image.open(row["Path"])
-            num_img = asarray(img)
-            images.append(num_img)
+            img = cv2.imread(row["Path"])
+            images.append(img)
             coordinates = []
             coordinates.append(row["X"])
             coordinates.append(row["Y"])
