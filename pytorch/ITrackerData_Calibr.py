@@ -98,8 +98,8 @@ class ITrackerData_Calibr(data.Dataset):
         ])
         
 
-        self.indices = np.arange(len(self.y))
         self.data = self.prepare()
+        self.indices = np.arange(len(self.data))
 
     def loadImage(self, array):
         try:
