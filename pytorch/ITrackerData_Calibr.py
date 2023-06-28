@@ -168,7 +168,6 @@ class ITrackerData_Calibr(data.Dataset):
         for image in self.images:
             per_image = []
             face, left_eye, right_eye, grid, flag = self.Frame_Process(image)
-            print(flag)
             if(not flag):
                 continue
             imFace = self.loadImage(face)
