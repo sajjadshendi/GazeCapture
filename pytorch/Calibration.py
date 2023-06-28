@@ -27,7 +27,7 @@ class Calibration():
         self.calibr_path = calibr_path
         self.imSize = imSize
         self.workers = 2
-        self.epochs = 10
+        self.epochs = 50
         self.base_lr = 0.0001
         self.momentum = 0.9
         self.weight_decay = 1e-4
