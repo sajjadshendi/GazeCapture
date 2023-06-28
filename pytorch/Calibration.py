@@ -27,8 +27,7 @@ class Calibration():
         self.calibr_path = calibr_path
         self.imSize = imSize
         self.workers = 2
-        self.epochs = 25
-        self.batch_size = torch.cuda.device_count()*100 # Change if out of cuda memory
+        self.epochs = 2
         self.base_lr = 0.0001
         self.momentum = 0.9
         self.weight_decay = 1e-4
@@ -41,7 +40,7 @@ class Calibration():
         dataTrain = ITrackerData_Calibr(dataPath = calibr_file, imSize = self.imSize)
         train_loader = torch.utils.data.DataLoader(
         dataTrain,
-        batch_size=self.batch_size, shuffle=True,
+        batch_size= 1, shuffle=True,
         num_workers=self.workers, pin_memory=True)
 
 
