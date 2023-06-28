@@ -11,6 +11,7 @@ import torchvision.transforms as transforms
 import torch
 import numpy as np
 import re
+import copy
 
 '''
 Data loader for the iTracker.
@@ -167,6 +168,7 @@ class ITrackerData_Calibr(data.Dataset):
         for image in self.images:
             per_image = []
             face, left_eye, right_eye, grid, flag = self.Frame_Process(image)
+            print(flag)
             if(not flag):
                 continue
             imFace = self.loadImage(face)
@@ -181,6 +183,7 @@ class ITrackerData_Calibr(data.Dataset):
             per_image.append(imEyeR)
             per_image.append(grid)
             data.append(per_image)
+            print("aa")
         return data
 
 
@@ -189,7 +192,7 @@ class ITrackerData_Calibr(data.Dataset):
 
             
         imFace = self.data[index][0]
-        imEyeL = self.data[ndex][1]
+        imEyeL = self.data[index][1]
         imEyeR = self.data[index][2]
         gaze = np.array([self.y[index][0], self.y[index][1]], np.float32)
 
