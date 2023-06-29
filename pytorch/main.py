@@ -207,7 +207,8 @@ def main():
                                 momentum=momentum,
                                 weight_decay=weight_decay)
     else:
-      dataPredict = ITracker_Prediction_Data(dataPath = args.data_path, imSize = imSize)
+      dataPredict1 = ITracker_Prediction_Data(dataPath = args.data_path, imSize = imSize)
+      dataPredict2 = ITracker_Prediction_Data(dataPath = args.data_path, imSize = imSize)
 
 
 
@@ -217,12 +218,19 @@ def main():
         return
     
     if doPredict:
+        raw_predicts1 = dataPredict1.process(model)
         model = Calibr_main(args.calibr_path, model)
+        raw_predicts2 = dataPredict2.process(model)
+        raw_predicts = []
+        for i in range(len(raw_predicts1)):
+            predict = []
+            predict.append(raw_predicts1[i][0][0])
+            predict.append(raw_predicts2[i][0][1])
+            raw_predicts.append(torch.tensor([predict]))
         if(not doCustom):
             obj = Device(float(args.screenW), float(args.screenH), float(args.CtoSx), float(args.CtoSy), "apple_device_data.csv")
             device = obj.pick_device()
             print("your device is " + device)
-        raw_predicts = dataPredict.process(model)
         print(raw_predicts)
         predicts = []
         for raw_predict in raw_predicts:
