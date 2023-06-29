@@ -40,7 +40,7 @@ class Calibration():
         dataTrain = ITrackerData_Calibr(dataPath = calibr_file, imSize = self.imSize)
         train_loader = torch.utils.data.DataLoader(
         dataTrain,
-        batch_size= 1,
+        batch_size= 16,
         num_workers=self.workers, pin_memory=True)
 
 
